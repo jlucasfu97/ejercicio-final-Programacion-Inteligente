@@ -1,0 +1,85 @@
+{
+  "title": "Feature: Minimal Express API with TypeScript",
+  "body": "The project needs a minimal Express.js API setup with TypeScript to serve as the foundation for the ActivityBookings backend. The setup should be minimal with no testing, linting, or additional dependencies beyond the core requirements for a modern Express API with TypeScript.\n\n**Specification**: [feat-minimal-express-api.spec.md](specs/feat-minimal-express-api.spec.md)\n\n**Reference**: [PRD](/PRD.md) TR1, TR3.",
+  "steps": [
+    {
+      "title": "Step 1: Project Configuration Setup",
+      "description": "Create the foundational configuration files for the TypeScript Express project.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create package.json with Express, TypeScript, tsx, and @types/express dependencies",
+          "description": "Set up package.json with all required dependencies"
+        },
+        {
+          "done": true,
+          "title": "Create tsconfig.json with strict TypeScript configuration targeting ES2020",
+          "description": "Configure TypeScript with strict mode"
+        },
+        {
+          "done": true,
+          "title": "Add npm scripts: dev (using tsx), build (using tsc), start (running built app), typecheck (type checking only)",
+          "description": "Set up development and production scripts"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: Express Application Setup",
+      "description": "Create the main Express application entry point with basic middleware and routes.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/index.ts file",
+          "description": "Main application entry point"
+        },
+        {
+          "done": true,
+          "title": "Set up Express app with JSON middleware",
+          "description": "Configure Express with JSON parsing"
+        },
+        {
+          "done": true,
+          "title": "Implement root endpoint / returning API status JSON",
+          "description": "Root endpoint with API information"
+        },
+        {
+          "done": true,
+          "title": "Implement health check endpoint /health returning status \"ok\"",
+          "description": "Health check endpoint for monitoring"
+        },
+        {
+          "done": true,
+          "title": "Configure server to listen on PORT environment variable or default to 3000",
+          "description": "Environment-based port configuration"
+        },
+        {
+          "done": true,
+          "title": "Add basic logging for server startup",
+          "description": "Log server startup information"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: Build Configuration",
+      "description": "Configure TypeScript build output and ensure production build works correctly.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Configure tsconfig.json output directory to dist/",
+          "description": "Set build output directory"
+        },
+        {
+          "done": true,
+          "title": "Ensure package.json start script points to compiled JavaScript in dist/",
+          "description": "Configure production start script"
+        },
+        {
+          "done": true,
+          "title": "Verify build process creates proper directory structure",
+          "description": "Validate build output"
+        }
+      ]
+    }
+  ],
+  "labels": ["enhancement"]
+}

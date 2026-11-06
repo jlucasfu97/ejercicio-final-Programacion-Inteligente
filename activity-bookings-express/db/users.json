@@ -1,0 +1,10 @@
+[
+  {
+    "id": "user-1",
+    "username": "Mark Musk",
+    "email": "m@f.c",
+    "password": "1234aB",
+    "terms": true,
+    "createdAt": "2026-01-26T09:52:15.182Z"
+  }
+]

@@ -1,0 +1,96 @@
+{
+  "title": "Feature: Activity Status Lifecycle",
+  "body": "The system needs to enforce a proper lifecycle for activities, ensuring that activities transition through statuses in a controlled manner: draft → published → confirmed → done or cancelled. Currently, activities can be created or updated with any status without validation of valid transitions.\n\n**Specification**: [feat-activity-status-lifecycle.spec.md](specs/feat-activity-status-lifecycle.spec.md)\n\n**Reference**: [PRD](/PRD.md) FR3, TR1, TR3, TR4.\n\n## Implementation Plan\n\n- **Specification**: [feat-activity-status-lifecycle.spec.md](specs/feat-activity-status-lifecycle.spec.md)\n- **PRD**: [FR3 Activity Status Lifecycle](PRD.md#fr3-activity-status-lifecycle)\n- **Branch**: feat/activity-status-lifecycle",
+  "steps": [
+    {
+      "title": "Step 1: Status Transition Validation Logic",
+      "description": "Implement business logic for validating activity status transitions according to lifecycle rules.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Add isValidStatusTransition method to ActivityService that validates transitions",
+          "description": "Create method that takes current status and target status, returns boolean indicating if transition is valid. Implement rules: draft→published, published→confirmed/cancelled/sold-out, confirmed→done/cancelled, sold-out→confirmed. Prevent transitions from done/cancelled to any status."
+        },
+        {
+          "done": true,
+          "title": "Add getValidTransitions helper method that returns allowed next statuses for a given status",
+          "description": "Create method that returns array of valid next statuses for a given current status, useful for error messages and validation"
+        },
+        {
+          "done": true,
+          "title": "Add transitionStatus method to ActivityService for status transitions",
+          "description": "Implement method that validates transition, updates activity status and updatedAt timestamp, throws error for invalid transitions or ownership issues"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: Status Transition Endpoint",
+      "description": "Create Express route endpoint for transitioning activity status with authentication and validation.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Add PATCH /activities/:id/status route handler in src/routes/activities.ts",
+          "description": "Create endpoint that accepts status in request body, requires authentication, validates ownership, and calls service transitionStatus method"
+        },
+        {
+          "done": true,
+          "title": "Implement request validation for status field in route handler",
+          "description": "Validate that request body contains status field and it's a valid ActivityStatus type"
+        },
+        {
+          "done": true,
+          "title": "Handle error responses: HTTP 400 for invalid transitions, HTTP 403 for ownership issues, HTTP 401 for auth, HTTP 404 for not found",
+          "description": "Return appropriate HTTP status codes and error messages for all error scenarios"
+        },
+        {
+          "done": true,
+          "title": "Return HTTP 200 with updated activity on successful transition",
+          "description": "Return the activity object with updated status and updatedAt timestamp"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: Update Existing Validation",
+      "description": "Ensure existing activity creation and update validation doesn't conflict with lifecycle rules.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Review validateCreate to ensure it allows draft status for new activities",
+          "description": "Verify that new activities can be created with draft status (default or explicit)"
+        },
+        {
+          "done": true,
+          "title": "Update validateUpdate to prevent direct status changes via PUT endpoint",
+          "description": "Either remove status from UpdateActivityRequest or add validation that status changes must go through PATCH /activities/:id/status endpoint"
+        }
+      ]
+    },
+    {
+      "title": "Step 4: Testing and Verification",
+      "description": "Verify the implementation works correctly and handles all edge cases.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Test valid status transitions (draft→published, published→confirmed, etc.)",
+          "description": "Verify all valid transitions work correctly and return HTTP 200"
+        },
+        {
+          "done": false,
+          "title": "Test invalid status transitions (draft→done, done→published, etc.)",
+          "description": "Verify invalid transitions return HTTP 400 with descriptive error message"
+        },
+        {
+          "done": false,
+          "title": "Test authentication and authorization (401 for unauthenticated, 403 for non-owner)",
+          "description": "Verify endpoint requires authentication and ownership"
+        },
+        {
+          "done": false,
+          "title": "Verify updatedAt timestamp is updated on status transition",
+          "description": "Check that updatedAt field is set when status changes"
+        }
+      ]
+    }
+  ],
+  "labels": ["enhancement"]
+}

@@ -1,0 +1,101 @@
+{
+  "title": "Feature: Booking Creation with Capacity Validation",
+  "body": "Users need to be able to book activities, but the system must prevent overbooking by ensuring that bookings do not exceed the available capacity (maxParticipants). Without booking creation, users cannot reserve spots for activities, and without capacity validation, the system could allow more bookings than available seats, leading to overbooking issues.\n\n**Specification**: [feat-booking-creation.spec.md](specs/feat-booking-creation.spec.md)\n\n**Reference**: [PRD](/PRD.md) FR4, TR1, TR3, TR4.\n\n## Implementation Plan\n\n- **Specification**: [feat-booking-creation.spec.md](specs/feat-booking-creation.spec.md)\n- **PRD**: [FR4 Booking Creation with Capacity Validation](PRD.md#fr4-booking-creation-with-capacity-validation)\n- **Branch**: feat/booking-creation",
+  "steps": [
+    {
+      "title": "Step 1: Type Definitions",
+      "description": "Create TypeScript type definitions for booking domain entities, request DTOs, and validation errors.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/types/booking.ts with Booking, CreateBookingRequest, and ValidationError types",
+          "description": "Define domain types for booking entity and request DTOs, including id, activityId, userId, participants, and timestamps"
+        },
+        {
+          "done": true,
+          "title": "Define Booking interface matching domain requirements with string IDs (not numbers)",
+          "description": "Use string IDs to match activity and user ID format (activity-1, user-1, booking-1)"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: Booking Service Implementation",
+      "description": "Implement business logic for booking creation with capacity validation.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/services/booking.service.ts with BookingService class",
+          "description": "Implement service with in-memory Map storage for bookings"
+        },
+        {
+          "done": true,
+          "title": "Implement create method for booking creation with capacity validation",
+          "description": "Create bookings with generated ID, validate capacity, set userId from authenticated user, inject ActivityService dependency"
+        },
+        {
+          "done": true,
+          "title": "Implement getBookingsByActivityId method to retrieve all bookings for an activity",
+          "description": "Return array of bookings filtered by activityId for capacity calculation"
+        },
+        {
+          "done": true,
+          "title": "Implement calculateAvailableCapacity helper method",
+          "description": "Calculate available capacity as activity.maxParticipants minus sum of participants from existing bookings"
+        },
+        {
+          "done": true,
+          "title": "Implement validateCreate method returning ValidationError arrays",
+          "description": "Validate required fields (activityId, participants), data types, activity existence, positive participants, and capacity availability"
+        },
+        {
+          "done": true,
+          "title": "Throw appropriate errors for capacity exceeded, activity not found, and validation failures",
+          "description": "Return descriptive error messages for different failure scenarios"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: Booking Routes",
+      "description": "Implement Express routes for booking creation endpoint with authentication middleware.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/routes/bookings.ts with booking endpoints",
+          "description": "Register route handlers for booking operations"
+        },
+        {
+          "done": true,
+          "title": "Implement POST /bookings endpoint with authentication and validation",
+          "description": "Create booking, extract userId from JWT token, validate capacity, return booking with HTTP 201"
+        },
+        {
+          "done": true,
+          "title": "Handle validation errors with HTTP 400, authentication errors with HTTP 401, activity not found with HTTP 404, and capacity exceeded with HTTP 400",
+          "description": "Return structured error responses for all error scenarios"
+        }
+      ]
+    },
+    {
+      "title": "Step 4: Application Integration",
+      "description": "Register booking routes in the main Express application with authentication middleware.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Import and register bookings router in src/index.ts",
+          "description": "Mount /bookings routes in the Express application"
+        },
+        {
+          "done": true,
+          "title": "Apply authentication middleware to POST /bookings route",
+          "description": "Protect booking creation endpoint with JWT authentication"
+        },
+        {
+          "done": true,
+          "title": "Verify server starts correctly and endpoints are accessible",
+          "description": "Test that the application runs and routes are registered correctly"
+        }
+      ]
+    }
+  ],
+  "labels": ["enhancement"]
+}

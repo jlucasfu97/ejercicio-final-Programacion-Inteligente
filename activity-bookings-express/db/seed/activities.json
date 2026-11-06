@@ -1,0 +1,58 @@
+[
+  {
+    "id": "activity-1",
+    "name": "Sunset Yoga Session",
+    "slug": "sunset-yoga-session",
+    "price": 25.0,
+    "date": "2027-02-15T18:00:00.000Z",
+    "duration": 60,
+    "location": "Beach Park",
+    "minParticipants": 5,
+    "maxParticipants": 20,
+    "status": "published",
+    "userId": "user-1",
+    "createdAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "activity-2",
+    "name": "City Bike Tour",
+    "slug": "city-bike-tour",
+    "price": 35.0,
+    "date": "2027-02-20T10:00:00.000Z",
+    "duration": 120,
+    "location": "City Center",
+    "minParticipants": 3,
+    "maxParticipants": 15,
+    "status": "published",
+    "userId": "user-1",
+    "createdAt": "2026-01-16T10:00:00.000Z"
+  },
+  {
+    "id": "activity-3",
+    "name": "Cooking Workshop: Italian Cuisine",
+    "slug": "cooking-workshop-italian-cuisine",
+    "price": 75.0,
+    "date": "2027-02-25T14:00:00.000Z",
+    "duration": 180,
+    "location": "Culinary Studio",
+    "minParticipants": 4,
+    "maxParticipants": 12,
+    "status": "published",
+    "userId": "user-1",
+    "createdAt": "2026-01-17T10:00:00.000Z"
+  },
+  {
+    "id": "activity-4",
+    "name": "Photography Walk",
+    "slug": "photography-walk",
+    "price": 30.0,
+    "date": "2027-03-01T09:00:00.000Z",
+    "duration": 90,
+    "location": "Historic District",
+    "minParticipants": 2,
+    "maxParticipants": 10,
+    "status": "draft",
+    "userId": "user-1",
+    "createdAt": "2026-01-18T10:00:00.000Z"
+  }
+]

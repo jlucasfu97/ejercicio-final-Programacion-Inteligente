@@ -1,0 +1,175 @@
+{
+  "title": "Chore: JSON File-System Store",
+  "body": "Implement JSON file-system persistence layer at `/db` folder with seed data support. Replace in-memory Map-based storage with file-based persistence that survives server restarts. Load seed data on startup to provide predefined activities for development, demos, and testing.\n\n**Specification**: [chore-json-file-system-store.spec.md](specs/chore-json-file-system-store.spec.md)\n\n**Reference**: [PRD](/PRD.md) TR6, [ADD](/ADD.md) ADR6.\n\n## Implementation Plan\n\n- **Specification**: [chore-json-file-system-store.spec.md](specs/chore-json-file-system-store.spec.md)\n- **PRD**: [TR6 JSON File-System Store](PRD.md#tr6-json-file-system-store)\n- **ADD**: [ADR6 JSON File-System Store at `/db` with Seed Data](ADD.md#adr-6-json-file-system-store-at-db-with-seed-data)\n- **Branch**: chore/json-file-system-store",
+  "steps": [
+    {
+      "title": "Step 1: Create Repository Layer and File I/O Utilities",
+      "description": "Create a repository abstraction layer and file I/O utilities for reading/writing JSON files with atomic writes.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/utils/file-storage.ts with functions for reading/writing JSON files",
+          "description": "Implement readJsonFile, writeJsonFile functions with atomic write pattern (write to temp, then rename), error handling, and directory creation"
+        },
+        {
+          "done": true,
+          "title": "Create src/repositories/base.repository.ts with abstract Repository interface",
+          "description": "Define generic repository interface with methods: load(), save(), getAll(), getById(), create(), update(), delete()"
+        },
+        {
+          "done": true,
+          "title": "Create src/repositories/json.repository.ts implementing base repository",
+          "description": "Implement JSON file-based repository that reads from/writes to JSON files, maintains in-memory Map for fast access, and handles seed data merging"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: Create Seed Data",
+      "description": "Create seed data directory and sample activities JSON file.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create db/seed/ directory structure",
+          "description": "Create db/seed/ folder at project root if it doesn't exist"
+        },
+        {
+          "done": true,
+          "title": "Create db/seed/activities.json with at least 3 predefined activities",
+          "description": "Create seed file with sample activities including different statuses, dates, and participant limits for testing and demos"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: Refactor ActivityService to Use Repository",
+      "description": "Modify ActivityService to use JSON repository instead of in-memory Map, maintaining backward compatibility with existing interface.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Update ActivityService constructor to accept repository dependency",
+          "description": "Modify ActivityService to accept a repository instance via constructor injection, with default to in-memory for backward compatibility"
+        },
+        {
+          "done": true,
+          "title": "Replace Map operations with repository calls in ActivityService",
+          "description": "Update all methods (create, getAll, getById, update, delete) to use repository instead of direct Map access"
+        },
+        {
+          "done": true,
+          "title": "Update activities route to initialize ActivityService with JSON repository",
+          "description": "Modify src/routes/activities.ts to create JSON repository and pass it to ActivityService constructor"
+        }
+      ]
+    },
+    {
+      "title": "Step 4: Refactor UserService to Use Repository",
+      "description": "Modify UserService to use JSON repository for user persistence.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Update UserService constructor to accept repository dependency",
+          "description": "Modify UserService to accept repository instance, maintain emailIndex Map for fast lookups"
+        },
+        {
+          "done": true,
+          "title": "Replace Map operations with repository calls in UserService",
+          "description": "Update create, getById, getByEmail methods to use repository, rebuild emailIndex from repository data on load"
+        },
+        {
+          "done": true,
+          "title": "Update users route to initialize UserService with JSON repository",
+          "description": "Modify src/routes/users.ts to create JSON repository and pass it to UserService constructor"
+        }
+      ]
+    },
+    {
+      "title": "Step 5: Refactor BookingService to Use Repository",
+      "description": "Modify BookingService to use JSON repository for booking persistence.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Update BookingService constructor to accept repository dependency",
+          "description": "Modify BookingService to accept repository instance via constructor injection"
+        },
+        {
+          "done": true,
+          "title": "Replace Map operations with repository calls in BookingService",
+          "description": "Update create, getAllByUserId, getById methods to use repository instead of direct Map access"
+        },
+        {
+          "done": true,
+          "title": "Update bookings route to initialize BookingService with JSON repository",
+          "description": "Modify src/routes/bookings.ts to create JSON repository and pass it to BookingService constructor"
+        }
+      ]
+    },
+    {
+      "title": "Step 6: Refactor PaymentService to Use Repository",
+      "description": "Modify PaymentService to use JSON repository for payment persistence.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Update PaymentService constructor to accept repository dependency",
+          "description": "Modify PaymentService to accept repository instance via constructor injection"
+        },
+        {
+          "done": true,
+          "title": "Replace Map operations with repository calls in PaymentService",
+          "description": "Update createForBooking, getById methods to use repository instead of direct Map access"
+        },
+        {
+          "done": true,
+          "title": "Update bookings route to initialize PaymentService with JSON repository",
+          "description": "Modify src/routes/bookings.ts to create JSON repository for payments and pass it to PaymentService constructor"
+        }
+      ]
+    },
+    {
+      "title": "Step 7: Implement Startup Data Loading",
+      "description": "Add startup logic to load seed data and persisted data when application starts.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/utils/data-loader.ts with loadSeedData and loadPersistedData functions",
+          "description": "Implement functions to load seed data from db/seed/ and persisted data from db/, with merge logic (persisted overrides seed)"
+        },
+        {
+          "done": true,
+          "title": "Update src/index.ts to initialize repositories and load data on startup",
+          "description": "Create repository instances, load seed and persisted data, initialize services with repositories before starting server"
+        },
+        {
+          "done": true,
+          "title": "Ensure repositories handle missing files gracefully",
+          "description": "Repository should create empty arrays if JSON files don't exist, and create db/ directory if missing"
+        }
+      ]
+    },
+    {
+      "title": "Step 8: Testing and Verification",
+      "description": "Verify that data persists across restarts and seed data loads correctly.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Test that activities persist to db/activities.json on create/update/delete",
+          "description": "Create an activity, restart server, verify activity still exists"
+        },
+        {
+          "done": false,
+          "title": "Test that seed data loads on startup",
+          "description": "Delete db/activities.json, restart server, verify seed activities are loaded"
+        },
+        {
+          "done": false,
+          "title": "Test that persisted data takes precedence over seed data",
+          "description": "Create activity with same ID as seed, restart server, verify persisted version is used"
+        },
+        {
+          "done": false,
+          "title": "Verify all entity types (users, bookings, payments) persist correctly",
+          "description": "Test persistence for all entity types across server restarts"
+        }
+      ]
+    }
+  ],
+  "labels": ["chore"]
+}

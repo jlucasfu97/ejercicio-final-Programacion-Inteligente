@@ -1,0 +1,101 @@
+{
+  "title": "Feature: Booking Retrieval",
+  "body": "Users need to retrieve their own bookings to view booking details, including activity information, participant count, and payment status. Without booking retrieval functionality, users cannot access information about their bookings after creation, making it impossible to track reservations, view booking history, or verify booking details.\n\n**Specification**: [feat-booking-retrieval.spec.md](specs/feat-booking-retrieval.spec.md)\n\n**Reference**: [PRD](/PRD.md) FR6, TR1, TR3, TR4.\n\n## Implementation Plan\n\n- **Specification**: [feat-booking-retrieval.spec.md](specs/feat-booking-retrieval.spec.md)\n- **PRD**: [FR6 Booking Retrieval](PRD.md#fr6-booking-retrieval)\n- **Branch**: feat/booking-retrieval",
+  "steps": [
+    {
+      "title": "Step 1: Type Definitions",
+      "description": "Extend booking type definitions to support retrieval responses with activity information and payment status.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Add BookingResponse type to src/types/booking.ts with enriched booking data",
+          "description": "Define response type that includes booking fields plus activity information (name, slug, price, date, duration, location, status) and payment status"
+        },
+        {
+          "done": true,
+          "title": "Add payment status type (pending, paid, refunded) as placeholder for FR5",
+          "description": "Define PaymentStatus type union for future payment integration"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: Booking Service Implementation",
+      "description": "Implement business logic for booking retrieval with user authorization and data enrichment.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Implement getAllByUserId method in BookingService to retrieve all bookings for a user",
+          "description": "Return array of bookings filtered by userId from in-memory Map storage"
+        },
+        {
+          "done": true,
+          "title": "Implement getById method in BookingService to retrieve a specific booking by ID",
+          "description": "Return booking by ID, return null if not found"
+        },
+        {
+          "done": true,
+          "title": "Implement enrichBookingWithActivity method to add activity information to booking",
+          "description": "Use ActivityService to fetch activity details and merge with booking data"
+        },
+        {
+          "done": true,
+          "title": "Implement enrichBookingWithPaymentStatus method (placeholder for FR5)",
+          "description": "Return default 'pending' status until payment service is implemented"
+        },
+        {
+          "done": true,
+          "title": "Implement getUserBookingById method that validates booking belongs to user",
+          "description": "Check booking exists and userId matches authenticated user, throw error if not found or unauthorized"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: Booking Routes",
+      "description": "Implement Express routes for booking retrieval endpoints with authentication middleware.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Implement GET /bookings endpoint in src/routes/bookings.ts",
+          "description": "Retrieve all bookings for authenticated user, return enriched booking data with HTTP 200"
+        },
+        {
+          "done": true,
+          "title": "Implement GET /bookings/:id endpoint in src/routes/bookings.ts",
+          "description": "Retrieve specific booking by ID for authenticated user, return enriched booking data with HTTP 200"
+        },
+        {
+          "done": true,
+          "title": "Apply authentication middleware to both GET endpoints",
+          "description": "Protect booking retrieval endpoints with JWT authentication"
+        },
+        {
+          "done": true,
+          "title": "Handle authentication errors with HTTP 401, booking not found with HTTP 404",
+          "description": "Return structured error responses for all error scenarios, ensure unauthorized access returns 404 (not 403) for security"
+        }
+      ]
+    },
+    {
+      "title": "Step 4: Application Integration",
+      "description": "Verify booking routes are properly registered and test the implementation.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Verify booking routes are already registered in src/index.ts",
+          "description": "Check that /bookings routes are mounted in the Express application"
+        },
+        {
+          "done": true,
+          "title": "Test GET /bookings endpoint returns user's bookings",
+          "description": "Verify endpoint returns correct bookings filtered by authenticated user"
+        },
+        {
+          "done": true,
+          "title": "Test GET /bookings/:id endpoint returns specific booking with activity info",
+          "description": "Verify endpoint returns enriched booking data including activity information"
+        }
+      ]
+    }
+  ],
+  "labels": ["enhancement"]
+}

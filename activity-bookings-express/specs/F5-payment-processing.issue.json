@@ -1,0 +1,102 @@
+{
+  "title": "Feature: Payment Processing",
+  "body": "When users book an activity, the system must charge them through a mock payment gateway and record the payment outcome. Payment is implicit in POST /bookings; on gateway success, booking is created with payment status; on failure, HTTP 402 is returned and no booking is created.\n\n**Specification**: [feat-payment-processing.spec.md](specs/feat-payment-processing.spec.md)\n\n**Reference**: [PRD](/PRD.md) FR5, TR5.\n\n## Implementation Plan\n\n- **Specification**: [feat-payment-processing.spec.md](specs/feat-payment-processing.spec.md)\n- **PRD**: [FR5 Payment Processing](PRD.md#fr5-payment-processing)\n- **Branch**: feat/payment-processing",
+  "steps": [
+    {
+      "title": "Step 1: Payment type definitions",
+      "description": "Create TypeScript types for payment domain entity, status, and mock gateway contract.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/types/payment.ts with PaymentStatus union and Payment interface",
+          "description": "Define PaymentStatus as 'pending' | 'paid' | 'refunded'; Payment with id, bookingId, amount, status, createdAt"
+        },
+        {
+          "done": true,
+          "title": "Define mock gateway adapter interface (e.g. charge(amount, context) => success/failure)",
+          "description": "Abstract contract for mock gateway so implementation can be swapped or configured"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: Mock payment gateway implementation",
+      "description": "Implement mock gateway adapter that simulates success and failure.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create mock gateway module (e.g. src/services/mock-payment-gateway.ts or adapter in payment.service)",
+          "description": "Implement charge(amount, context): returns { success: boolean } or similar; configurable/deterministic failure (e.g. fail when amount mod 1000 === 0 or env-driven)"
+        },
+        {
+          "done": true,
+          "title": "Ensure mock supports both success and failure scenarios for testing",
+          "description": "Document or implement simple rule for when to fail (e.g. specific amount, flag, or random with seed)"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: Payment service and storage",
+      "description": "Implement payment creation and in-memory storage.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/services/payment.service.ts with PaymentService class",
+          "description": "In-memory Map for payments; create(bookingId, amount, status) returning Payment; getById; inject mock gateway"
+        },
+        {
+          "done": true,
+          "title": "Implement createForBooking: call gateway, on success create payment (status paid) and return it, on failure throw",
+          "description": "Orchestrate gateway charge + payment creation; throw on gateway failure so booking is not created"
+        },
+        {
+          "done": true,
+          "title": "Generate payment IDs as payment-${incrementingId}",
+          "description": "Consistent with existing ID patterns"
+        }
+      ]
+    },
+    {
+      "title": "Step 4: Extend Booking entity and BookingService",
+      "description": "Add paymentId and paymentStatus to Booking; integrate payment into booking creation flow.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Add paymentId and paymentStatus to Booking type in src/types/booking.ts",
+          "description": "Both optional for backward compatibility if needed; for new bookings always set"
+        },
+        {
+          "done": true,
+          "title": "Update BookingService.create: after capacity check, call PaymentService.createForBooking(activityId, amount, userId)",
+          "description": "Compute amount = activity.price * participants; if payment throws, rethrow (no booking created)"
+        },
+        {
+          "done": true,
+          "title": "On payment success, create booking with paymentId and paymentStatus, persist, return booking",
+          "description": "Ensure booking creation and payment creation are consistent; no orphan payments"
+        }
+      ]
+    },
+    {
+      "title": "Step 5: Routes and HTTP 402",
+      "description": "Update booking route to handle payment failure and return 402.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Wire PaymentService into booking route (instantiate, pass to BookingService or call from route)",
+          "description": "Follow existing DI style (services instantiated in route file)"
+        },
+        {
+          "done": true,
+          "title": "Catch payment-failure errors in POST /bookings handler; return HTTP 402 with error message",
+          "description": "Do not create booking on payment failure; respond with clear message"
+        },
+        {
+          "done": true,
+          "title": "Ensure 201 response includes booking with paymentId and paymentStatus",
+          "description": "Response shape already returns booking; extend with new fields"
+        }
+      ]
+    }
+  ],
+  "labels": ["enhancement"]
+}

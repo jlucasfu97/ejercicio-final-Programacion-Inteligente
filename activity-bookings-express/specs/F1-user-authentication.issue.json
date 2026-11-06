@@ -1,0 +1,133 @@
+{
+  "title": "Feature: User Authentication and Management",
+  "body": "The system needs user authentication and management capabilities to enable secure access to the ActivityBookings API. Users must be able to register with email and password, authenticate to receive JWT tokens, and use those tokens to access protected endpoints.\n\n**Specification**: [feat-user-authentication.spec.md](specs/feat-user-authentication.spec.md)\n\n**Reference**: [PRD](/PRD.md) FR1, TR2, TR3, TR4.",
+  "steps": [
+    {
+      "title": "Step 1: Dependencies and Type Definitions",
+      "description": "Add JWT library dependency and create TypeScript type definitions for authentication.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Add jsonwebtoken and @types/jsonwebtoken to package.json dependencies",
+          "description": "Install JWT library for token generation and validation"
+        },
+        {
+          "done": false,
+          "title": "Create src/types/user.ts with User, CreateUserRequest, LoginRequest, and ValidationError types",
+          "description": "Define domain types for user entity and request DTOs"
+        },
+        {
+          "done": false,
+          "title": "Create src/types/auth.ts with JWT payload and authentication response types",
+          "description": "Define types for JWT token structure and auth responses"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: User Service Implementation",
+      "description": "Implement business logic for user registration, authentication, and password validation.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Create src/services/user.service.ts with UserService class",
+          "description": "Implement service with in-memory Map storage for users"
+        },
+        {
+          "done": false,
+          "title": "Implement create method for user registration with validation",
+          "description": "Register new users with email uniqueness check and field validation"
+        },
+        {
+          "done": false,
+          "title": "Implement authenticate method for login with email and password verification",
+          "description": "Validate credentials and return user data on successful authentication"
+        },
+        {
+          "done": false,
+          "title": "Implement validateRegister and validateLogin methods returning ValidationError arrays",
+          "description": "Validate email format, password requirements, and required fields"
+        },
+        {
+          "done": false,
+          "title": "Implement getByEmail method for email-based user lookup",
+          "description": "Helper method to find users by email for registration and login"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: JWT Token Management",
+      "description": "Implement JWT token generation and validation utilities.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Create src/utils/jwt.ts with generateToken and verifyToken functions",
+          "description": "Generate JWT tokens with user ID and email, verify and decode tokens"
+        },
+        {
+          "done": false,
+          "title": "Configure JWT secret from environment variable or default value",
+          "description": "Use JWT_SECRET env var or fallback to development secret"
+        }
+      ]
+    },
+    {
+      "title": "Step 4: Authentication Middleware",
+      "description": "Create Express middleware for JWT token validation and user extraction.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Create src/middleware/auth.middleware.ts with authenticateToken middleware",
+          "description": "Extract and validate JWT from Authorization header, attach user to request"
+        },
+        {
+          "done": false,
+          "title": "Handle missing or invalid tokens with HTTP 401 responses",
+          "description": "Return appropriate error messages for authentication failures"
+        }
+      ]
+    },
+    {
+      "title": "Step 5: Authentication Routes",
+      "description": "Implement Express routes for user registration and login endpoints.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Create src/routes/auth.ts with POST /register and POST /login endpoints",
+          "description": "Register route handlers for authentication endpoints"
+        },
+        {
+          "done": false,
+          "title": "Implement POST /register endpoint with validation and user creation",
+          "description": "Validate input, create user, return user data with HTTP 201"
+        },
+        {
+          "done": false,
+          "title": "Implement POST /login endpoint with credential validation and JWT generation",
+          "description": "Authenticate user, generate JWT token, return user and token with HTTP 200"
+        },
+        {
+          "done": false,
+          "title": "Handle validation errors with HTTP 400 and authentication errors with HTTP 401",
+          "description": "Return structured error responses for all error scenarios"
+        }
+      ]
+    },
+    {
+      "title": "Step 6: Application Integration",
+      "description": "Register authentication routes in the main Express application.",
+      "tasks": [
+        {
+          "done": false,
+          "title": "Import and register auth router in src/index.ts",
+          "description": "Mount /auth routes in the Express application"
+        },
+        {
+          "done": false,
+          "title": "Verify server starts correctly and endpoints are accessible",
+          "description": "Test that the application runs and routes are registered"
+        }
+      ]
+    }
+  ],
+  "labels": ["enhancement"]
+}

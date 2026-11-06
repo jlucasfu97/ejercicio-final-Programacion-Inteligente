@@ -1,0 +1,131 @@
+{
+  "title": "Feature: Activity Management",
+  "body": "The system needs activity management capabilities to enable activity providers to create, read, update, and delete activities. Activities represent bookable events with properties such as name, slug, price, date, duration, location, participant thresholds, and status.\n\n**Specification**: [feat-activity-management.spec.md](specs/feat-activity-management.spec.md)\n\n**Reference**: [PRD](/PRD.md) FR2, TR1, TR3, TR4.\n\n## Implementation Plan\n\n- **Specification**: [feat-activity-management.spec.md](specs/feat-activity-management.spec.md)\n- **PRD**: [FR2 Activity Management](PRD.md#fr2-activity-management)\n- **Branch**: feat/activity-management",
+  "steps": [
+    {
+      "title": "Step 1: Type Definitions",
+      "description": "Create TypeScript type definitions for activity domain entities, request DTOs, and validation errors.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/types/activity.ts with Activity, CreateActivityRequest, UpdateActivityRequest, and ValidationError types",
+          "description": "Define domain types for activity entity and request DTOs, including ActivityStatus union type"
+        },
+        {
+          "done": true,
+          "title": "Define ActivityStatus type locally in activity.ts to match client types",
+          "description": "Define ActivityStatus union type locally since client folder is outside src rootDir"
+        }
+      ]
+    },
+    {
+      "title": "Step 2: Activity Service Implementation",
+      "description": "Implement business logic for activity CRUD operations, validation, and slug generation.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/services/activity.service.ts with ActivityService class",
+          "description": "Implement service with in-memory Map storage for activities"
+        },
+        {
+          "done": true,
+          "title": "Implement create method for activity creation with validation and slug generation",
+          "description": "Create activities with generated ID and slug, set userId from authenticated user"
+        },
+        {
+          "done": true,
+          "title": "Implement getAll method to return all activities",
+          "description": "Return array of all activities from storage"
+        },
+        {
+          "done": true,
+          "title": "Implement getById method for activity lookup by ID",
+          "description": "Return activity by ID or undefined if not found"
+        },
+        {
+          "done": true,
+          "title": "Implement update method for activity updates with ownership validation",
+          "description": "Update activity only if userId matches, merge request data with existing activity"
+        },
+        {
+          "done": true,
+          "title": "Implement delete method for activity deletion with ownership validation",
+          "description": "Delete activity only if userId matches, return true if deleted or false if not found"
+        },
+        {
+          "done": true,
+          "title": "Implement validateCreate and validateUpdate methods returning ValidationError arrays",
+          "description": "Validate required fields, data types, date (future dates), price (positive), duration (positive), minParticipants <= maxParticipants, and valid status"
+        },
+        {
+          "done": true,
+          "title": "Implement generateSlug helper method to convert name to URL-friendly slug",
+          "description": "Convert name to lowercase, replace spaces with hyphens, remove special characters"
+        }
+      ]
+    },
+    {
+      "title": "Step 3: Activity Routes",
+      "description": "Implement Express routes for activity CRUD endpoints with authentication middleware.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Create src/routes/activities.ts with activity endpoints",
+          "description": "Register route handlers for activity CRUD operations"
+        },
+        {
+          "done": true,
+          "title": "Implement POST /activities endpoint with authentication and validation",
+          "description": "Create activity, extract userId from JWT token, return activity with HTTP 201"
+        },
+        {
+          "done": true,
+          "title": "Implement GET /activities endpoint to list all activities",
+          "description": "Return all activities with HTTP 200, no authentication required"
+        },
+        {
+          "done": true,
+          "title": "Implement GET /activities/:id endpoint to get specific activity",
+          "description": "Return activity by ID with HTTP 200, or HTTP 404 if not found"
+        },
+        {
+          "done": true,
+          "title": "Implement PUT /activities/:id endpoint with authentication and ownership validation",
+          "description": "Update activity if user owns it, return updated activity with HTTP 200, or HTTP 403/404 on errors"
+        },
+        {
+          "done": true,
+          "title": "Implement DELETE /activities/:id endpoint with authentication and ownership validation",
+          "description": "Delete activity if user owns it, return HTTP 204, or HTTP 403/404 on errors"
+        },
+        {
+          "done": true,
+          "title": "Handle validation errors with HTTP 400, authentication errors with HTTP 401, and ownership errors with HTTP 403",
+          "description": "Return structured error responses for all error scenarios"
+        }
+      ]
+    },
+    {
+      "title": "Step 4: Application Integration",
+      "description": "Register activity routes in the main Express application with authentication middleware.",
+      "tasks": [
+        {
+          "done": true,
+          "title": "Import and register activities router in src/index.ts",
+          "description": "Mount /activities routes in the Express application"
+        },
+        {
+          "done": true,
+          "title": "Apply authentication middleware to POST, PUT, and DELETE routes",
+          "description": "Protect create, update, and delete endpoints with JWT authentication"
+        },
+        {
+          "done": true,
+          "title": "Verify server starts correctly and endpoints are accessible",
+          "description": "Test that the application runs and routes are registered correctly"
+        }
+      ]
+    }
+  ],
+  "labels": ["enhancement"]
+}
