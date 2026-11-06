@@ -1,0 +1,31 @@
+<section class="auth">
+  <h1>Iniciar sesión</h1>
+
+  @if (expired()) {
+    <p class="notice">Tu sesión ha caducado. Vuelve a iniciar sesión.</p>
+  }
+
+  <form [formRoot]="loginForm" class="stack">
+    <label>
+      <span>Email</span>
+      <input type="email" autocomplete="email" [formField]="loginForm.email" />
+      <app-field-errors [state]="loginForm.email()" />
+    </label>
+
+    <label>
+      <span>Contraseña</span>
+      <input type="password" autocomplete="current-password" [formField]="loginForm.password" />
+      <app-field-errors [state]="loginForm.password()" />
+    </label>
+
+    @if (serverError(); as message) {
+      <p class="alert" role="alert">{{ message }}</p>
+    }
+
+    <button type="submit" class="primary" [disabled]="loginForm().submitting()">
+      {{ loginForm().submitting() ? 'Entrando…' : 'Entrar' }}
+    </button>
+  </form>
+
+  <p class="muted">¿No tienes cuenta? <a routerLink="/register" [queryParams]="{ returnUrl: returnUrl() }">Regístrate</a></p>
+</section>

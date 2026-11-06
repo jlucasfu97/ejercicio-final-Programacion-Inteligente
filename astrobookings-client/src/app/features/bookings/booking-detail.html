@@ -1,0 +1,38 @@
+<p><a routerLink="/bookings" class="back">← Mis reservas</a></p>
+
+@if (loadError(); as error) {
+  <div class="alert" role="alert">
+    <p>{{ error.message }}</p>
+    @if (error.status !== 404) {
+      <button type="button" (click)="bookingResource.reload()">Reintentar</button>
+    }
+  </div>
+} @else if (booking(); as booking) {
+  <article class="detail">
+    <header>
+      <span class="badge" [attr.data-payment]="booking.paymentStatus">{{ paymentLabel(booking.paymentStatus) }}</span>
+      <h1>{{ booking.activity.name }}</h1>
+      <p class="muted">Reserva {{ booking.id }} · hecha el {{ booking.createdAt | date: 'd MMM y, HH:mm' }}</p>
+    </header>
+
+    <dl class="facts">
+      <div><dt>Fecha</dt><dd>{{ booking.activity.date | date: 'EEEE d MMMM y, HH:mm' }}</dd></div>
+      <div><dt>Lugar</dt><dd>{{ booking.activity.location }}</dd></div>
+      <div><dt>Duración</dt><dd>{{ booking.activity.duration }} min</dd></div>
+      <div><dt>Plazas</dt><dd>{{ booking.participants }}</dd></div>
+      <div>
+        <dt>Importe</dt>
+        <dd>
+          {{ booking.activity.price * booking.participants | currency: 'EUR' }}
+          <span class="muted">({{ booking.participants }} × {{ booking.activity.price | currency: 'EUR' }})</span>
+        </dd>
+      </div>
+      <div><dt>Pago</dt><dd>{{ paymentLabel(booking.paymentStatus) }}{{ booking.paymentId ? ' · ' + booking.paymentId : '' }}</dd></div>
+      <div><dt>Estado actividad</dt><dd>{{ statusLabel(booking.activity.status) }}</dd></div>
+    </dl>
+
+    <p><a [routerLink]="['/activities', booking.activityId]">Ver la actividad</a></p>
+  </article>
+} @else {
+  <p class="muted">Cargando reserva…</p>
+}

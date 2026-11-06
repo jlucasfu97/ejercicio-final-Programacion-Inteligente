@@ -1,0 +1,58 @@
+.topbar {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.topbar nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding-block: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.brand {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.links a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.links a:hover,
+.links a.active {
+  color: var(--text);
+}
+
+.links .button-link {
+  color: var(--accent-contrast);
+  background: var(--accent);
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius);
+}
+
+.links .button-link:hover {
+  color: var(--accent-contrast);
+}
+
+.user {
+  color: var(--text);
+  font-weight: 500;
+}
+
+main {
+  padding-block: 2rem 4rem;
+}

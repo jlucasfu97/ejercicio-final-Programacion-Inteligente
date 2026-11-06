@@ -1,0 +1,39 @@
+<section class="auth">
+  <h1>Crear cuenta</h1>
+
+  <form [formRoot]="registerForm" class="stack">
+    <label>
+      <span>Nombre</span>
+      <input type="text" autocomplete="name" [formField]="registerForm.username" />
+      <app-field-errors [state]="registerForm.username()" />
+    </label>
+
+    <label>
+      <span>Email</span>
+      <input type="email" autocomplete="email" [formField]="registerForm.email" />
+      <app-field-errors [state]="registerForm.email()" />
+    </label>
+
+    <label>
+      <span>Contraseña</span>
+      <input type="password" autocomplete="new-password" [formField]="registerForm.password" />
+      <app-field-errors [state]="registerForm.password()" />
+    </label>
+
+    <label class="check">
+      <input type="checkbox" [formField]="registerForm.terms" />
+      <span>Acepto los términos y condiciones</span>
+    </label>
+    <app-field-errors [state]="registerForm.terms()" />
+
+    @if (serverError(); as message) {
+      <p class="alert" role="alert">{{ message }}</p>
+    }
+
+    <button type="submit" class="primary" [disabled]="registerForm().submitting()">
+      {{ registerForm().submitting() ? 'Creando cuenta…' : 'Crear cuenta' }}
+    </button>
+  </form>
+
+  <p class="muted">¿Ya tienes cuenta? <a routerLink="/login" [queryParams]="{ returnUrl: returnUrl() }">Inicia sesión</a></p>
+</section>

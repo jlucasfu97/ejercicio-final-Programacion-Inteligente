@@ -1,0 +1,76 @@
+<p><a routerLink="/activities" class="back">← Actividades</a></p>
+
+@if (loadError(); as error) {
+  <div class="alert" role="alert">
+    <p>{{ error.message }}</p>
+    @if (error.status !== 404) {
+      <button type="button" (click)="activityResource.reload()">Reintentar</button>
+    }
+  </div>
+} @else if (activity(); as activity) {
+  <article class="detail">
+    <header>
+      <span class="badge" [attr.data-status]="activity.status">{{ statusLabel(activity.status) }}</span>
+      <h1>{{ activity.name }}</h1>
+    </header>
+
+    <dl class="facts">
+      <div><dt>Fecha</dt><dd>{{ activity.date | date: 'EEEE d MMMM y, HH:mm' }}</dd></div>
+      <div><dt>Lugar</dt><dd>{{ activity.location }}</dd></div>
+      <div><dt>Duración</dt><dd>{{ activity.duration }} min</dd></div>
+      <div><dt>Precio</dt><dd>{{ activity.price | currency: 'EUR' }} / plaza</dd></div>
+      <div><dt>Plazas</dt><dd>{{ activity.minParticipants }}–{{ activity.maxParticipants }} participantes</dd></div>
+    </dl>
+  </article>
+
+  <section class="booking">
+    <h2>Reservar</h2>
+
+    @switch (availability()) {
+      @case ('login') {
+        <p class="muted">
+          <a routerLink="/login" [queryParams]="{ returnUrl: '/activities/' + activity.id }">Inicia sesión</a>
+          o <a routerLink="/register" [queryParams]="{ returnUrl: '/activities/' + activity.id }">crea una cuenta</a>
+          para reservar.
+        </p>
+      }
+      @case ('owner') {
+        <p class="muted">Eres el organizador de esta actividad, no puedes reservarla.</p>
+      }
+      @case ('past') {
+        <p class="muted">Esta actividad ya se ha realizado.</p>
+      }
+      @case ('closed') {
+        <p class="muted">Esta actividad no admite reservas ({{ statusLabel(activity.status).toLowerCase() }}).</p>
+      }
+      @case ('open') {
+        <form [formRoot]="bookingForm" class="booking-form">
+          <label>
+            <span>Plazas <span class="muted">(máx. {{ activity.maxParticipants }})</span></span>
+            <input type="number" [formField]="bookingForm.participants" />
+          </label>
+          <p class="total">
+            Total <strong>{{ total() | currency: 'EUR' }}</strong>
+          </p>
+          <button type="submit" class="primary" [disabled]="bookingForm().submitting()">
+            {{ bookingForm().submitting() ? 'Reservando…' : 'Reservar y pagar' }}
+          </button>
+        </form>
+        <app-field-errors [state]="bookingForm.participants()" />
+      }
+    }
+
+    @if (bookingError(); as message) {
+      <p class="alert" role="alert">{{ message }}</p>
+    }
+
+    @if (lastBooking(); as booking) {
+      <p class="success" role="status">
+        Reserva confirmada: {{ booking.participants }} {{ booking.participants === 1 ? 'plaza' : 'plazas' }}, pago
+        completado. <a [routerLink]="['/bookings', booking.id]">Ver reserva</a>
+      </p>
+    }
+  </section>
+} @else {
+  <p class="muted">Cargando actividad…</p>
+}

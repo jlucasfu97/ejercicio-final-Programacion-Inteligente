@@ -1,0 +1,47 @@
+<section>
+  <header class="page-head">
+    <h1>Actividades</h1>
+    <input
+      #search
+      type="search"
+      class="search"
+      placeholder="Buscar por nombre o lugar"
+      aria-label="Buscar actividades"
+      [value]="query()"
+      (input)="query.set(search.value)"
+    />
+  </header>
+
+  @if (errorMessage(); as message) {
+    <div class="alert" role="alert">
+      <p>{{ message }}</p>
+      <button type="button" (click)="activities.reload()">Reintentar</button>
+    </div>
+  } @else if (activities.isLoading() && !activities.hasValue()) {
+    <p class="muted">Cargando actividades…</p>
+  } @else {
+    <ul class="list">
+      @for (activity of visible(); track activity.id) {
+        <li>
+          <a class="row" [routerLink]="['/activities', activity.id]">
+            <div>
+              <strong>{{ activity.name }}</strong>
+              <p class="muted">
+                {{ activity.date | date: 'EEE d MMM y, HH:mm' }} · {{ activity.location }} · {{ activity.duration }} min
+              </p>
+            </div>
+            <div class="row-end">
+              <span class="price">{{ activity.price | currency: 'EUR' }}</span>
+              <span class="muted">{{ activity.maxParticipants }} plazas</span>
+              <span class="badge" [attr.data-status]="activity.status">{{ statusLabel(activity.status) }}</span>
+            </div>
+          </a>
+        </li>
+      } @empty {
+        <li class="empty muted">
+          {{ query() ? 'Ninguna actividad coincide con la búsqueda.' : 'No hay actividades disponibles ahora mismo.' }}
+        </li>
+      }
+    </ul>
+  }
+</section>

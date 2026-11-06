@@ -1,0 +1,21 @@
+<header class="topbar">
+  <nav class="container">
+    <a routerLink="/activities" class="brand">AstroBookings</a>
+
+    <div class="links">
+      <a routerLink="/activities" routerLinkActive="active">Actividades</a>
+      @if (auth.user(); as user) {
+        <a routerLink="/bookings" routerLinkActive="active">Mis reservas</a>
+        <span class="user" title="{{ user.email }}">{{ user.username }}</span>
+        <button type="button" class="link" (click)="logout()">Salir</button>
+      } @else {
+        <a routerLink="/login" routerLinkActive="active">Entrar</a>
+        <a routerLink="/register" class="button-link">Registrarse</a>
+      }
+    </div>
+  </nav>
+</header>
+
+<main class="container">
+  <router-outlet />
+</main>

@@ -1,0 +1,38 @@
+<section>
+  <header class="page-head">
+    <h1>Mis reservas</h1>
+  </header>
+
+  @if (errorMessage(); as message) {
+    <div class="alert" role="alert">
+      <p>{{ message }}</p>
+      <button type="button" (click)="bookings.reload()">Reintentar</button>
+    </div>
+  } @else if (bookings.isLoading() && !bookings.hasValue()) {
+    <p class="muted">Cargando reservas…</p>
+  } @else {
+    <ul class="list">
+      @for (booking of sorted(); track booking.id) {
+        <li>
+          <a class="row" [class.past]="isPast(booking)" [routerLink]="['/bookings', booking.id]">
+            <div>
+              <strong>{{ booking.activity.name }}</strong>
+              <p class="muted">
+                {{ booking.activity.date | date: 'EEE d MMM y, HH:mm' }} · {{ booking.activity.location }}
+              </p>
+            </div>
+            <div class="row-end">
+              <span class="price">{{ booking.activity.price * booking.participants | currency: 'EUR' }}</span>
+              <span class="muted">{{ booking.participants }} {{ booking.participants === 1 ? 'plaza' : 'plazas' }}</span>
+              <span class="badge" [attr.data-payment]="booking.paymentStatus">{{ paymentLabel(booking.paymentStatus) }}</span>
+            </div>
+          </a>
+        </li>
+      } @empty {
+        <li class="empty muted">
+          Todavía no tienes reservas. <a routerLink="/activities">Explora las actividades</a>.
+        </li>
+      }
+    </ul>
+  }
+</section>
